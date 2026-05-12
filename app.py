@@ -3,7 +3,6 @@
 import csv
 import io
 import json
-import os
 
 import anthropic
 import streamlit as st
@@ -235,18 +234,12 @@ def main() -> None:
     st.markdown(PAGE_CSS, unsafe_allow_html=True)
 
     # ── Sidebar: inputs ───────────────────────────────────────────────────────
+    api_key = st.secrets["ANTHROPIC_API_KEY"]
+
     with st.sidebar:
         st.markdown("### ■ Investment Scorecard")
         st.caption("Evaluate companies against your investment thesis using AI analysis.")
         st.divider()
-
-        api_key = st.text_input(
-            "Anthropic API Key",
-            value=os.environ.get("ANTHROPIC_API_KEY", ""),
-            type="password",
-            placeholder="sk-ant-...",
-            help="Your key is never stored or sent anywhere except the Anthropic API.",
-        )
 
         st.markdown("**Industry Thesis**")
         thesis = st.text_area(
@@ -280,8 +273,6 @@ def main() -> None:
     if run:
         # Validate inputs
         errors = []
-        if not api_key:
-            errors.append("Enter your Anthropic API key in the sidebar.")
         if not thesis.strip():
             errors.append("Industry thesis cannot be empty.")
         companies = [c.strip() for c in companies_raw.splitlines() if c.strip()]
